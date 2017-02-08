@@ -32,7 +32,7 @@ function install_sil_dictionary_infrastructure() {
 	
 	$postsCollation = $wpdb->get_var($sql);
 
-	if (version_compare($wpdb->db_version(), '5.5.3') >= 0 && ($postsCollation == "utf8mb4_general_ci" || $postsCollation == "utf8mb4_unicode_ci"))
+	if (true || version_compare($wpdb->db_version(), '5.5.3') >= 0 && ($postsCollation == "utf8mb4_general_ci" || $postsCollation == "utf8mb4_unicode_ci"))
 	{
 		define('COLLATION', "UTF8MB4");
 		define('FULLCOLLATION', "utf8mb4_unicode_ci");
@@ -63,7 +63,7 @@ function create_reversal_tables () {
 	global $wpdb;
 
 	$table = REVERSALTABLE;
-	$sql = "CREATE TABLE IF NOT EXISTS " . $table . " (
+	$sql = "CREATE TABLE `" . $table . "` (
 		`id` varchar(20) NOT NULL,
 		`language_code` varchar(20) CHARACTER SET " . COLLATION . " COLLATE " . FULLCOLLATION . ",
 		`reversal_head` longtext CHARACTER SET " . COLLATION . " COLLATE " . FULLCOLLATION . ",
@@ -81,15 +81,15 @@ function create_search_tables () {
 	global $wpdb;
 
 	$table = SEARCHTABLE;
-	$sql = "CREATE TABLE IF NOT EXISTS " . $table . " (
+	$sql = "CREATE TABLE `" . $table . "` (
 		`post_id` bigint(20) NOT NULL,
-		`language_code` varchar(20) CHARACTER SET " . COLLATION . " COLLATE " . FULLCOLLATION . ",
+		`language_code` varchar(20),
 		`relevance` tinyint,
-		`search_strings` longtext CHARACTER SET " . COLLATION . " COLLATE " . FULLCOLLATION . ",
+		`search_strings` longtext,
 		`subid` INT NOT NULL DEFAULT  '0',
-		`sortorder` INT NOT NULL DEFAULT '0', ";
-		$sql .= " PRIMARY KEY (`post_id`, `language_code`, `relevance`, `search_strings` ( 150 )), ";
-		$sql .= " INDEX (relevance)
+		`sortorder` INT NOT NULL DEFAULT '0',
+		PRIMARY KEY  (`post_id`, `language_code`, `relevance`, `search_strings` ( 150 )),
+		INDEX relevance_idx (relevance)
 		) CHARACTER SET " . COLLATION . " COLLATE " . FULLCOLLATION . ";";
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );

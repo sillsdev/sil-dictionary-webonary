@@ -100,10 +100,12 @@ function sil_dictionary_custom_join($join) {
 		{
 			$key = $wp_query->query_vars['langcode'];
 		}
-		$partialsearch = $_GET['partialsearch'];
 		if(!isset($_GET['partialsearch']))
 		{
 			$partialsearch = get_option("include_partial_words");
+		} else
+		{
+			$partialsearch = $_GET['partialsearch'];
 		}
 
 		if(strlen($search) == 0 && $_GET['tax'] > 1)
