@@ -563,9 +563,12 @@ function webonary_conf_widget($showTitle = false) {
 		See <a href="http://www.webonary.org/help/setting-up-a-font/" target="_blank">Setting up a Font</a>.
 		<hr>
 		<?php
-		$fontFacesFile = file_get_contents($upload_dir['baseurl'] . '/custom.css');
-		$arrFontFacesFile = $fontClass->get_fonts_fromCssText($fontFacesFile);
-		
+		$arrFontFacesFile = array();
+		$customCSSFilePath = $upload_dir['basedir'] . '/custom.css';
+		if (file_exists($customCSSFilePath)) {
+			$fontFacesFile = file_get_contents($customCSSFilePath);
+			$arrFontFacesFile = $fontClass->get_fonts_fromCssText($fontFacesFile);
+		}
 		$options = get_option('themezee_options');
 		$arrFontFacesZeeOptions = $fontClass->get_fonts_fromCssText($options['themeZee_custom_css']);
 
@@ -576,7 +579,7 @@ function webonary_conf_widget($showTitle = false) {
 			$userFont = trim($userFont);
 			
 			$fontKey = array_search($userFont, $arrFontName);
-			
+				
 			if(!strstr($userFont, "default font"))
 			{
 				echo "<strong>" . $userFont . "</strong><br>";
