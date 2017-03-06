@@ -550,6 +550,24 @@ function getVernacularHeadword($postid, $languagecode)
 	
 }
 
+function get_letter() {
+	if (!isset($_GET['letter'])) {
+		return null;
+	}
+	$chosenLetter = stripslashes(trim($_GET['letter']));
+	// REVIEW: Do we really want to silently fail if this is not true? CP 2017-02 
+	if (class_exists("Normalizer", $autoload = false))
+	{
+		$normalization = Normalizer::FORM_C;
+		if(get_option("normalization") == "FORM_D")
+		{
+			$normalization = Normalizer::FORM_D;
+		}
+		$chosenLetter = normalizer_normalize($chosenLetter, $normalization);
+	}
+	return $chosenLetter;
+}
+
 function vernacularalphabet_func( $atts )
 {
 	$upload_dir = wp_upload_dir();
@@ -559,15 +577,8 @@ function vernacularalphabet_func( $atts )
 	$languagecode = get_option('languagecode');
 	
 	$alphas = explode(",",  get_option('vernacular_alphabet'));
-	
-	if(isset($_GET['letter']))
-	{
-		$chosenLetter = stripslashes($_GET['letter']);
-	}
-	else {
-		$chosenLetter = stripslashes($alphas[0]);
-	}
-		
+
+	$chosenLetter = get_letter();	
 	
 	$display = displayAlphabet($alphas, $languagecode);
 	$display .= "<div align=center><h1>" . $chosenLetter . "</h1></div><br>";
@@ -583,8 +594,6 @@ function vernacularalphabet_func( $atts )
 	$noLetters = "";
 	foreach($alphas as $alpha)
 	{
-		//$alpha = stripslashes($alpha);
-		$chosenLetter = trim($chosenLetter);
 		$alpha = trim($alpha);
 		
 		if(preg_match("/" . $chosenLetter . "/i", $alpha) && $chosenLetter != stripslashes($alpha))
