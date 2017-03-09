@@ -100,12 +100,10 @@ function sil_dictionary_custom_join($join) {
 		{
 			$key = $wp_query->query_vars['langcode'];
 		}
+		$partialsearch = $_GET['partialsearch'];
 		if(!isset($_GET['partialsearch']))
 		{
 			$partialsearch = get_option("include_partial_words");
-		} else
-		{
-			$partialsearch = $_GET['partialsearch'];
 		}
 
 		if(strlen($search) == 0 && $_GET['tax'] > 1)
@@ -128,18 +126,6 @@ function sil_dictionary_custom_join($join) {
 		if(isset($wp_query->query_vars['letter']))
 		{
 			$letter = trim($wp_query->query_vars['letter']);
-				
-			if (class_exists("Normalizer", $autoload = false))
-			{
-				$normalization = Normalizer::FORM_C;
-				
-				if(get_option("normalization") == "FORM_D")
-				{
-					$normalization = Normalizer::FORM_D;
-				}
-				
-				$letter = normalizer_normalize(trim($letter), $normalization);
-			}
 			$noletters = trim($wp_query->query_vars['noletters']);
 
 			//by default we use collate utf8_bin and à, ä, etc. are handled as different letters
@@ -440,6 +426,10 @@ function webonary_css()
 		clear:none;
 		white-space:unset;
 	}
+span.comment {
+	background: none;
+	padding: 0px;
+}
 </style>
 <?php
 }
