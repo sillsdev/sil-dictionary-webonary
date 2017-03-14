@@ -314,7 +314,6 @@ function webonary_conf_widget($showTitle = false) {
 				<option value=6 <?php selected(get_option('publicationStatus'), 6); ?>><?php _e('Formally published'); ?></option>
 			</select>
 			<p>
-	
 			<h3><?php _e( 'Delete Data', 'sil_dictionary' ); ?></h3>
 			<?php if(strpos($_SERVER['HTTP_HOST'], 'localhost') === false && is_super_admin()) { ?>
 				<strong style=color:red;>You are not in your testing environment!</strong>
@@ -564,7 +563,7 @@ function webonary_conf_widget($showTitle = false) {
 		<hr>
 		<?php
 		$arrFontFacesFile = array();
-		$customCSSFilePath = $upload_dir['baseurl'] . '/custom.css';
+		$customCSSFilePath = $upload_dir['basedir'] . '/custom.css';
 		if (file_exists($customCSSFilePath)) {
 			$fontFacesFile = file_get_contents($customCSSFilePath);
 			$arrFontFacesFile = $fontClass->get_fonts_fromCssText($fontFacesFile);
