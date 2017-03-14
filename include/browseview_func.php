@@ -161,6 +161,19 @@ function displayAlphabet($alphas, $languagecode)
 ?>
 	<style type="text/css">
 	.lpTitleLetterCell {min-width:31px; height: 23x; padding-top: 3px; padding-bottom: 2px; text-bottom; text-align:center;background-color: #EEEEEE;border:1px solid silver; float:left; position: relative;}
+	<?php
+	if(get_option('vernacularLettersFont') != "")
+	{
+	?>
+	.lpTitleLetter  {
+		font-family: "<?php echo get_option('vernacularLettersFont'); ?>";
+	}
+	#chosenLetterHead {
+		font-family: "<?php echo get_option('vernacularLettersFont'); ?>";
+	}
+	<?php
+	}
+	?>
 	</style>
 <?php
 	$display = "<br>";
@@ -555,7 +568,7 @@ function get_letter() {
 		return null;
 	}
 	$chosenLetter = stripslashes(trim($_GET['letter']));
-	// REVIEW: Do we really want to silently fail if this is not true? CP 2017-02 
+	// REVIEW: Do we really want to silently fail if this is not true? CP 2017-02
 	if (class_exists("Normalizer", $autoload = false))
 	{
 		$normalization = Normalizer::FORM_C;
@@ -578,10 +591,10 @@ function vernacularalphabet_func( $atts )
 	
 	$alphas = explode(",",  get_option('vernacular_alphabet'));
 
-	$chosenLetter = get_letter();	
+	$chosenLetter = get_letter();
 	
 	$display = displayAlphabet($alphas, $languagecode);
-	$display .= "<div align=center><h1>" . $chosenLetter . "</h1></div><br>";
+	$display .= "<div align=center><h1 id=chosenLetterHead>" . $chosenLetter . "</h1></div><br>";
 
 	if(empty($languagecode))
 	{
