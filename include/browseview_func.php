@@ -563,9 +563,9 @@ function getVernacularHeadword($postid, $languagecode)
 	
 }
 
-function get_letter() {
+function get_letter($firstLetterOfAlphabet = "") {
 	if (!isset($_GET['letter'])) {
-		return null;
+		return $firstLetterOfAlphabet;
 	}
 	$chosenLetter = stripslashes(trim($_GET['letter']));
 	// REVIEW: Do we really want to silently fail if this is not true? CP 2017-02
@@ -591,7 +591,7 @@ function vernacularalphabet_func( $atts )
 	
 	$alphas = explode(",",  get_option('vernacular_alphabet'));
 
-	$chosenLetter = get_letter();
+	$chosenLetter = get_letter($alphas[0]);
 	
 	$display = displayAlphabet($alphas, $languagecode);
 	$display .= "<div align=center><h1 id=chosenLetterHead>" . $chosenLetter . "</h1></div><br>";
