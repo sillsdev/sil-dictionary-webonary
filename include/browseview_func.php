@@ -460,7 +460,7 @@ function reversalindex($display, $chosenLetter, $langcode)
 	</style>
 <?php
 	$upload_dir = wp_upload_dir();
-	wp_register_style('reversal_stylesheet', $upload_dir['baseurl'] . '/reversal_' . $langcode . '.css?time=' . date("U"));
+	wp_register_style('reversal_stylesheet', '/files/reversal_' . $langcode . '.css?time=' . date("U"));
 	wp_enqueue_style( 'reversal_stylesheet');
 
 	$page = $_GET['pagenr'];
@@ -584,7 +584,8 @@ function get_letter($firstLetterOfAlphabet = "") {
 function vernacularalphabet_func( $atts )
 {
 	$upload_dir = wp_upload_dir();
-	wp_register_style('configured_stylesheet', $upload_dir['baseurl'] . '/imported-with-xhtml.css?time=' . date("U"));
+	//wp_register_style('configured_stylesheet', $upload_dir['baseurl'] . '/imported-with-xhtml.css?time=' . date("U"));
+	wp_register_style('configured_stylesheet', '/files/imported-with-xhtml.css?time=' . date("U"));
 	wp_enqueue_style( 'configured_stylesheet');
 	
 	$languagecode = get_option('languagecode');
