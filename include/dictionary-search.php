@@ -360,9 +360,6 @@ function replace_default_search_filter($input, $query=null)
 	if (empty($query))
 	    return $input;
 
-		//$limit = get_query_var('chung_limit');
-
-
 	// chungh 20200303 I re-write the logic slightly for clarity.
 	// But in doing so, I realized that COMBINED searches, e.g. searching for a word
 	// within semantic domain or parts of speech (taxomony) would not work as is.
@@ -370,12 +367,12 @@ function replace_default_search_filter($input, $query=null)
 	// TODO: fix these in Webonary 1.5		
 	if (isset($_GET['tax']) && $_GET['tax'] > 1)
 	{
-			$input = "SELECT DISTINCTROW $wpdb->posts.* " .
-			" FROM $wpdb->posts " .
-			" INNER JOIN $wpdb->term_relationships ON $wpdb->posts.ID = $wpdb->term_relationships.object_id " .
-			" INNER JOIN $wpdb->term_taxonomy ON $wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id " .
-			" WHERE 1=1  AND $wpdb->posts.post_type IN ('post') AND $wpdb->term_taxonomy.term_id = " . $_GET['tax'] .
-			" ORDER BY menu_order ASC, post_title ASC";
+		$input = "SELECT DISTINCTROW $wpdb->posts.* " .
+		" FROM $wpdb->posts " .
+		" INNER JOIN $wpdb->term_relationships ON $wpdb->posts.ID = $wpdb->term_relationships.object_id " .
+		" INNER JOIN $wpdb->term_taxonomy ON $wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id " .
+		" WHERE 1=1  AND $wpdb->posts.post_type IN ('post') AND $wpdb->term_taxonomy.term_id = " . $_GET['tax'] .
+		" ORDER BY menu_order ASC, post_title ASC";
 	}
 	elseif (isset($query->query_vars['semdomain']))
 	{
