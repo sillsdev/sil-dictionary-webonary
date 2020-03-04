@@ -155,8 +155,10 @@ ORDER BY r.language_code
 SQL;
 
 		$arrReversals = $wpdb->get_results($sql);
+		foreach($arrReversals as $reversal) {
+			$reversals[$reversal->language_code] = $reversal->totalIndexed;
+		} 
 
-		$s = 0;
 		foreach($arrIndexed as $key => $indexed)
 		{
 			/** @noinspection SqlResolve */
@@ -169,14 +171,10 @@ LIMIT 1
 SQL;
 
 			$language_name = $wpdb->get_var($sqlLangName);
-
 			$arrIndexed[$key]->language_name = $language_name;
 
-			if($arrReversals[$s]->language_code == $indexed->language_code)
-			{
-				$arrIndexed[$key]->totalIndexed = $arrReversals[$s]->totalIndexed;
-				$s++;
-			}
+			if(isset($reversals[$indexed->language_code]))
+				$arrIndexed[$key]->totalIndexed = $reversals[$indexed->language_code];
 		}
 
 		//legacy code, to count approximate number of reversals before we imported reversal entries into
