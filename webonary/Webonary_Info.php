@@ -148,11 +148,10 @@ SQL;
 		$table_name = Webonary_Configuration::$reversal_table_name;
 		/** @noinspection SqlResolve */
 		$sql = <<<SQL
-SELECT r.language_code, t.name as language_name, COUNT(r.language_code) AS totalIndexed
+SELECT r.language_code, COUNT(r.language_code) AS totalIndexed
 FROM {$table_name} AS r
-  RIGHT JOIN {$wpdb->terms} AS t ON t.slug = r.language_code
 GROUP BY r.language_code
-ORDER BY t.name, r.language_code
+ORDER BY r.language_code
 SQL;
 
 		$arrReversals = $wpdb->get_results($sql);
@@ -189,19 +188,17 @@ SQL;
 			$count_posts = count(self::posts(''));
 			foreach($arrIndexed as $key => $indexed)
 			{
-				/** @noinspection SqlResolve */
-				$sql = <<<SQL
-SELECT search_strings
+				if($count_posts != $indexed->totalIndexed && ($count_posts + 1) != $indexed->totalIndexed)
+				{
+					/** @noinspection SqlResolve */
+					$sql = <<<SQL
+SELECT COUNT(DISTINCT search_strings)
 FROM {$table_name} 
 WHERE language_code = '{$indexed->language_code}'
 AND relevance >= 95
-GROUP BY search_strings COLLATE {$char_set}_BIN
 SQL;
-
-				$arrIndexGrouped = $wpdb->get_results($sql);
-
-				if($count_posts != $indexed->totalIndexed && ($count_posts + 1) != $indexed->totalIndexed)
-					$arrIndexed[$key]->totalIndexed = count($arrIndexGrouped);
+					$arrIndexed[$key]->totalIndexed = $wpdb->get_var($sql);
+				}
 			}
 		}
 
