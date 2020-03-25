@@ -71,6 +71,16 @@ class Webonary_Configuration
 		echo '</div>'.PHP_EOL; //'<!-- id="tab-'.$nm.'" -->';
 	}
 
+	public static function get_blog_dictionary_code()
+	{
+		return (
+			is_subdomain_install()
+			? explode('.', $_SERVER['HTTP_HOST'])[0]
+			: str_replace('/', '', get_blog_details()->path)
+		);
+	}
+
+
 	public static function get_LanguageCodes($language_code = null)
 	{
 		global $wpdb;

@@ -204,7 +204,7 @@ function search_dictionary_entries($posts, WP_Query $query) {
 		return null;
 	}
 
-	$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
+	$dictionary = Webonary_Configuration::get_blog_dictionary_code();
 	$request = WEBONARY_CLOUD_ENTRY_PATH . 'search/' . $dictionary . '/' . $search_word;	
 
 	return get_dictionary_entries_as_posts($request, $dictionary);
@@ -214,7 +214,7 @@ function search_dictionary_entries($posts, WP_Query $query) {
 function get_dictionary_entry( $content ) {
 	$page_name = get_query_var('name');
 	if (preg_match('/^g[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $page_name)) {
-		$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
+		$dictionary = Webonary_Configuration::get_blog_dictionary_code();
 		
 		$request = WEBONARY_CLOUD_ENTRY_PATH . 'entry/' . $page_name;
 		echo 'Getting results from ' . $request; 

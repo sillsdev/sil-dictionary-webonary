@@ -18,6 +18,7 @@ if (!defined('DS'))
 define('MYSQL_CHARSET', $wpdb->charset);
 define('MYSQL_COLLATION', $wpdb->collate);
 
+
 // This is the Webonary Auto-Loader.
 // It must be loaded before the includes below.
 function webonary_autoloader($class_name)

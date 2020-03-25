@@ -596,7 +596,7 @@ function reversalindex($display, $chosenLetter, $langcode, $reversalnr = "")
 
 	if( get_option('useCloudBackend') )
 	{
-		$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
+		$dictionary = Webonary_Configuration::get_blog_dictionary_code();
 		$arrReversals = get_dictionary_entries_as_reversals($dictionary, $langcode, $chosenLetter);
 	}
 	else
@@ -865,9 +865,7 @@ function vernacularalphabet_func( $atts )
 
 		if( get_option('useCloudBackend') )
 		{
-			$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
-
-			// $dictionary = 'spanish-englishfooddictionary';
+			$dictionary = Webonary_Configuration::get_blog_dictionary_code();
 			$request = WEBONARY_CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter;
 			$arrPosts = get_dictionary_entries_as_posts($request, $dictionary);
 		}
