@@ -481,7 +481,6 @@ function getReversalEntries($letter = "", $page, $reversalLangcode = "", &$displ
 		}
 
 		$arrReversals = $wpdb->get_results($sql);
-
 		if(count($arrReversals) > 0)
 		{
 			$displayXHTML = false;
@@ -594,7 +593,21 @@ function reversalindex($display, $chosenLetter, $langcode, $reversalnr = "")
 	}
 
 	$displayXHTML = true;
-	$arrReversals = getReversalEntries($chosenLetter, $page, $langcode, $displayXHTML, $reversalnr);
+
+	// Proof of Concept demo, using locahost test data, or moore or spanish-englishfooddictionary only
+	if( in_array(get_current_blog_id(), array(2,624,222)) )
+	{
+		$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
+
+		// $dictionary = 'spanish-englishfooddictionary';
+		$request = CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter . '&lang=' . $langcode;
+		$arrReversals = get_dictionary_entries_as_reversals($request, $dictionary, $langcode);
+	}
+	else
+	{
+		$arrReversals = getReversalEntries($chosenLetter, $page, $langcode, $displayXHTML, $reversalnr);
+	}
+
 	if($arrReversals == null)
 	{
 		$display .= "No reversal entries imported.";
@@ -853,13 +866,24 @@ function vernacularalphabet_func( $atts )
 		}
 
 		//$arrPosts = query_posts("s=a&letter=" . $chosenLetter . "&noletters=" . $noLetters . "&langcode=" . $languagecode . "&posts_per_page=" . $posts_per_page . "&paged=" . $_GET['pagenr'] . "&DisplaySubentriesAsMainEntries=" . $displaySubentriesAsMinorEntries);
-		$arrPosts = getVernacularEntries($chosenLetter, $languagecode, $_GET['pagenr']);
+
+		// Proof of Concept demo, using locahost test data, or moore or spanish-englishfooddictionary only
+		if( in_array(get_current_blog_id(), array(2,624,222)) )
+		{
+			$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
+
+			// $dictionary = 'spanish-englishfooddictionary';
+			$request = CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter;
+			$arrPosts = get_dictionary_entries_as_posts($request, $dictionary);
+		}
+		else
+		{
+			$arrPosts = getVernacularEntries($chosenLetter, $languagecode, $_GET['pagenr']);
+		}
 
 		if(!isset($_GET['totalEntries']))
 		{
-			$sql = "SELECT FOUND_ROWS()";
-
-			$totalEntries = $wpdb->get_var($sql);
+			$totalEntries = count($arrEntries);
 		}
 		else
 		{
@@ -909,5 +933,4 @@ function vernacularalphabet_func( $atts )
 }
 
 add_shortcode( 'vernacularalphabet', 'vernacularalphabet_func' );
-
 ?>
