@@ -594,14 +594,10 @@ function reversalindex($display, $chosenLetter, $langcode, $reversalnr = "")
 
 	$displayXHTML = true;
 
-	// Proof of Concept demo, using locahost test data, or moore or spanish-englishfooddictionary only
-	if( in_array(get_current_blog_id(), array(2,624,222)) )
+	if( get_option('useCloudBackend') )
 	{
 		$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
-
-		// $dictionary = 'spanish-englishfooddictionary';
-		$request = CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter . '&lang=' . $langcode;
-		$arrReversals = get_dictionary_entries_as_reversals($request, $dictionary, $langcode);
+		$arrReversals = get_dictionary_entries_as_reversals($dictionary, $langcode, $chosenLetter);
 	}
 	else
 	{
@@ -867,13 +863,12 @@ function vernacularalphabet_func( $atts )
 
 		//$arrPosts = query_posts("s=a&letter=" . $chosenLetter . "&noletters=" . $noLetters . "&langcode=" . $languagecode . "&posts_per_page=" . $posts_per_page . "&paged=" . $_GET['pagenr'] . "&DisplaySubentriesAsMainEntries=" . $displaySubentriesAsMinorEntries);
 
-		// Proof of Concept demo, using locahost test data, or moore or spanish-englishfooddictionary only
-		if( in_array(get_current_blog_id(), array(2,624,222)) )
+		if( get_option('useCloudBackend') )
 		{
 			$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
 
 			// $dictionary = 'spanish-englishfooddictionary';
-			$request = CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter;
+			$request = WEBONARY_CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter;
 			$arrPosts = get_dictionary_entries_as_posts($request, $dictionary);
 		}
 		else

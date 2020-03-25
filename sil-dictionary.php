@@ -107,7 +107,7 @@ function convert_dictionary_entry_to_fake_post($dictionary, $entry) {
 	$lexemeform = '';
 	if ($entry->audio->src != '') {
 		$lexemeform .= '<span class="lexemeform"><span><audio id="' . $entry->audio->id . '">';
-		$lexemeform .= '<source src="' . CLOUD_FILE_PATH . $dictionary . '/'  . $entry->audio->src . '"></audio>';
+		$lexemeform .= '<source src="' . WEBONARY_CLOUD_FILE_PATH . $dictionary . '/'  . $entry->audio->src . '"></audio>';
 		$lexemeform .= '<a class="' . $entry->audio->fileClass . '" href="#' . $entry->audio->id . '" onClick="document.getElementById(\'' . $entry->audio->id .   '\').play()"> </a></span></span>';
 	}
 
@@ -127,8 +127,8 @@ function convert_dictionary_entry_to_fake_post($dictionary, $entry) {
 		$pictures = '<span class="pictures">';
 		foreach( $entry->pictures as $picture )	{
 			$pictures .= '<div class="picture">';
-			$pictures .= '<a class="image" href="' . CLOUD_FILE_PATH . $dictionary . '/'  . $picture->src . '">';
-			$pictures .= '<img src="' . CLOUD_FILE_PATH . $dictionary . '/'  . $picture->src . '"></a>';
+			$pictures .= '<a class="image" href="' . WEBONARY_CLOUD_FILE_PATH . $dictionary . '/'  . $picture->src . '">';
+			$pictures .= '<img src="' . WEBONARY_CLOUD_FILE_PATH . $dictionary . '/'  . $picture->src . '"></a>';
 			$pictures .= '<div class="captioncontent"><span class="headword"><span lang="' . $definition->lang . '">' . $picture->caption . '</span></span></div>';
 			$pictures .= '</div>';
 		}
@@ -146,7 +146,9 @@ function convert_dictionary_entry_to_fake_post($dictionary, $entry) {
 	return $post;
 }
 
-function get_dictionary_entries_as_reversals($request, $dictionary, $langcode) {
+function get_dictionary_entries_as_reversals($dictionary, $langcode, $chosenLetter) {
+	$request = WEBONARY_CLOUD_ENTRY_PATH . 'browse/' . $dictionary . '?letterHead=' . $chosenLetter . '&lang=' . $langcode;
+
 	echo 'Getting results from ' . $request; 
 	$response = wp_remote_get( $request );
 	$reversals = [];
@@ -154,26 +156,26 @@ function get_dictionary_entries_as_reversals($request, $dictionary, $langcode) {
 	if (is_array($response)) { 
 		$body = json_decode( $response['body'] ); // use the content
 		foreach( $body as $key => $entry ) {
-			$reversals[$key] = convert_dictionary_entry_to_reversal($dictionary, $entry, $langcode);
+			$reversals[$key] = convert_dictionary_entry_to_reversal($dictionary, $langcode, $chosenLetter, $entry);
 		}	
 	}
 
 	return $reversals;
 }
 
-function convert_dictionary_entry_to_reversal($dictionary, $entry, $langcode) {	
+function convert_dictionary_entry_to_reversal($dictionary, $langcode, $chosenLetter, $entry) {	
 	//<div class=post><div xmlns="http://www.w3.org/1999/xhtml" class="reversalindexentry" id="g009ab666-43dd-4f2f-ba62-7017417f6b23"><span class="reversalform"><span lang="en">aardvark</span></span><span class="sensesrs"><span class="sensecontent"><span class="sensesr" entryguid="gee1142ec-65f5-4e23-8d95-413685a48c23"><span class="headword"><span lang="mos"><a href="https://www.webonary.org/moore/gee1142ec-65f5-4e23-8d95-413685a48c23">tãnturi</a></span></span><span class="scientificname"><span lang="en">orycteropus afer</span></span></span></span></span></div></div>
 	
 	$reversal_value = '';
 	foreach( $entry->senses->definitionOrGloss as $definition )	{
-		if ($langcode == $definition->lang) {
+		if( ($langcode == $definition->lang) && ($chosenLetter == substr($definition->value, 0, 1)) ) {
 			$reversal_value = $definition->value;
 			break;
 		}
 	}
 
-	$content = '<div class=post><div class="reversalindexentry">';
-	$content .= '<span class="reversalform"><span lang="' . $lang . '">';
+	$content = '<div class="reversalindexentry">';
+	$content .= '<span class="reversalform"><span lang="' . $langcode . '">';
 	$content .= $reversal_value . '</span></span>';
 	
 	$content .= '<span class="sensesrs"><span class="sensecontent">';
@@ -183,7 +185,7 @@ function convert_dictionary_entry_to_reversal($dictionary, $entry, $langcode) {
 		. '<a href="' . get_site_url() . '/' . $entry->_id . '">' . $entry->mainHeadWord[0]->value . '</a></span></span>';
 
 	$content .= '</span></span></span>';
-	$content .= '</div></div>';
+	$content .= '</<div>';
 	
 	$reversal = new stdClass();
 	$reversal->reversal_content = $content;
@@ -203,9 +205,7 @@ function search_dictionary_entries($posts, WP_Query $query) {
 	}
 
 	$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
-
-	// $dictionary = 'spanish-englishfooddictionary';
-	$request = CLOUD_ENTRY_PATH . 'search/' . $dictionary . '/' . $search_word;	
+	$request = WEBONARY_CLOUD_ENTRY_PATH . 'search/' . $dictionary . '/' . $search_word;	
 
 	return get_dictionary_entries_as_posts($request, $dictionary);
 }
@@ -215,9 +215,8 @@ function get_dictionary_entry( $content ) {
 	$page_name = get_query_var('name');
 	if (preg_match('/^g[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $page_name)) {
 		$dictionary = is_subdomain_install() ? explode('.', $_SERVER['HTTP_HOST'])[0] : str_replace('/', '', get_blog_details()->path);
-		// $dictionary = 'spanish-englishfooddictionary';
 		
-		$request = CLOUD_ENTRY_PATH . 'entry/' . $page_name;
+		$request = WEBONARY_CLOUD_ENTRY_PATH . 'entry/' . $page_name;
 		echo 'Getting results from ' . $request; 
 		$response = wp_remote_get( $request );
 	
@@ -231,7 +230,7 @@ function get_dictionary_entry( $content ) {
 	return $content;
 }
 
-if (in_array(get_current_blog_id(), array(2,624,222))) {
+if (get_option('useCloudBackend')) {
 	add_filter( 'posts_pre_query', 'search_dictionary_entries', 10, 2 );
 	add_filter('the_content', 'get_dictionary_entry');  
 }

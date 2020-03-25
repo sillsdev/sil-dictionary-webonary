@@ -18,10 +18,6 @@ if (!defined('DS'))
 define('MYSQL_CHARSET', $wpdb->charset);
 define('MYSQL_COLLATION', $wpdb->collate);
 
-// Cloud backend
-define('CLOUD_ENTRY_PATH', 'https://fikqmwx9md.execute-api.us-east-2.amazonaws.com/prod/');
-define('CLOUD_FILE_PATH', 'https://webonarypocatlasstack-dictionarybucket8e4dd392-13w3qaeonxy99.s3.us-east-2.amazonaws.com/');
-
 // This is the Webonary Auto-Loader.
 // It must be loaded before the includes below.
 function webonary_autoloader($class_name)
